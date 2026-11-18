@@ -13,8 +13,9 @@ public class Main {
         System.out.println();
 
         InventarioLegadoWS legado = new InventarioLegadoWS();
-        CatalogoEquipamentos catalogo = new CatalogoEquipamentos(legado);
-        RelatorioAcervo relatorio = new RelatorioAcervo(legado);
+        FonteDeEquipamentos fonteDeEquipamentos = new AdaptadorInventarioLegado(legado);
+        CatalogoEquipamentos catalogo = new CatalogoEquipamentos(fonteDeEquipamentos);
+        RelatorioAcervo relatorio = new RelatorioAcervo(fonteDeEquipamentos);
 
         System.out.println("1) O mesmo dado, convertido em dois lugares");
         System.out.println("   Disponiveis segundo o catalogo:");

@@ -1,32 +1,24 @@
 package siga;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * PROBLEMA 1 (parte B) - a MESMA conversao, escrita de novo, em outro lugar.
+ * Cliente do padrao Adapter: mostra a situação de todos
+ * os equipamentos do acervo.
  *
- * Aqui alguem percebeu que a situacao as vezes vem em minuscula e corrigiu.
- * A correcao nao chegou ao CatalogoEquipamentos: as duas versoes ja divergem, e o
- * mesmo Equipamento aparece indisponivel em um lugar e disponivel no outro.
+ * Depende somente da abstração {@link FonteDeEquipamentos}, a mesma usada pelo
+ * {@link CatalogoEquipamentos}.
  */
 public class RelatorioAcervo {
 
-    private final InventarioLegadoWS legado;
+    private final FonteDeEquipamentos fonte;
 
-    public RelatorioAcervo(InventarioLegadoWS legado) {
-        this.legado = legado;
+    public RelatorioAcervo(FonteDeEquipamentos fonte) {
+        this.fonte = fonte;
     }
 
     public List<Equipamento> listarTodos() {
-        List<Equipamento> todos = new ArrayList<>();
-        for (String[] linha : legado.consultarEquipamentos()) {
-            Equipamento item = new Equipamento(linha[0], linha[1]);
-            // aqui a minuscula foi tratada
-            item.setDisponivel("D".equalsIgnoreCase(linha[2]));
-            todos.add(item);
-        }
-        return todos;
+        return fonte.listar();
     }
 
     public void imprimir() {
