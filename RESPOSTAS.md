@@ -78,19 +78,47 @@ o código que já existe em `Reserva`, em vez de acrescentar código novo.
 
 **O problema que ele resolve (descreva antes de nomear o padrão):**
 
+O sistema precisa usar um serviço externo que não pode ser alterado e cuja
+interface não é a que ele espera: o serviço devolve uma matriz de texto com a
+situação em letra, e os clientes querem objetos `Equipamento`. O padrão coloca
+uma classe no meio, `AdaptadorInventarioLegado`, que implementa a interface do
+sistema, `FonteDeEquipamentos`, chama o serviço por composição e faz a conversão
+uma vez só. `CatalogoEquipamentos` e `RelatorioAcervo` passam a depender só da
+interface.
 
 **Nome do padrão:**
 
+Adapter, padrão estrutural.
 
 **Alternativa descartada e por que ela não resolveria por completo:**
 
+Alterar o `InventarioLegadoWS` para sempre mandar a letra em maiúscula ou já
+devolver `Equipamento`. Além de não ser possível porque o serviço é de outra
+equipe, não resolveria por completo. A divergência do PAT-1003 sumiria, mas a
+conversão continuaria duplicada e as duas classes continuariam dependendo da
+classe concreta.
+A próxima mudança de formato teria que ser corrigida de novo em
+dois lugares e trocar o serviço ainda exigiria alterar os clientes.
 
 ## Padrão aplicado ao Problema 2
 
 **O problema que ele resolve (descreva antes de nomear o padrão):**
 
+Um objeto cujo comportamento depende da fase em que está: a mesma operação é
+permitida numa fase, recusada em outra e leva a fases diferentes. O padrão
+transforma cada fase numa classe, `FaseSolicitada`, `FaseEmUso` e
+`FaseEncerrada`, que diz se cada operação é permitida e qual é a próxima fase.
+`Reserva` só guarda a fase atual e delega a ela, sem nenhum `if`. Uma fase nova
+vira uma classe nova, e só mudam as fases que levam até ela.
 
 **Nome do padrão:**
 
+State, padrão comportamental.
 
 **Alternativa descartada e por que ela não resolveria por completo:**
+
+Trocar a `String` por um `enum` com `SOLICITADA`, `EM_USO` e `ENCERRADA`. Isso
+resolveria o erro de digitação, porque o compilador passaria a conferir os
+nomes, mas os `if` ou `switch` continuariam nos três métodos de `Reserva`. As
+regras continuariam espalhadas por operação e uma fase nova ainda exigiria
+alterar todos os métodos públicos, então a violação do OCP continuaria.
