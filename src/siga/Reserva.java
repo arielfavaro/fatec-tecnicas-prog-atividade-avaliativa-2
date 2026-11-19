@@ -1,62 +1,39 @@
 package siga;
 
 /**
- * PROBLEMA 2 - o ciclo de vida resolvido com condicionais sobre um campo
- * de texto.
+ * Contexto do padrão State: guarda a fase atual do ciclo de vida e delega a
+ * ela cada operação.
  *
- * Tres sintomas: (a) as regras de transicao estao espalhadas pelos metodos
- * publicos, e ninguem le o ciclo de vida inteiro num lugar so; (b) um
- * estado novo exige alterar todos eles; e (c) a situacao e texto, entao um
- * erro de digitacao so aparece em execucao.
- *
- * Ciclo de vida vigente - E ELE QUE DEVE SER PRESERVADO:
- *   SOLICITADA  --retirar-->  EM_USO
- *   SOLICITADA  --cancelar-->  ENCERRADA
- *   EM_USO  --devolver-->  ENCERRADA
- *   ENCERRADA e final: recusa as tres operacoes.
+ * Os métodos públicos só trocam a fase atual pela que ela devolve. As regras
+ * de transição ficam nas classes de fase: {@link FaseSolicitada},
+ * {@link FaseEmUso} e {@link FaseEncerrada}.
  */
 public class Reserva {
 
     private final Usuario solicitante;
     private final Equipamento item;
+    private FaseReserva fase;
 
     public Reserva(Usuario solicitante, Equipamento item) {
         this.solicitante = solicitante;
         this.item = item;
-        this.situacao = "SOLICITADA";
+        this.fase = new FaseSolicitada();
     }
 
-    private String situacao;
-
     public String getSituacao() {
-        return situacao;
+        return fase.getNome();
     }
 
     public void retirar() {
-        if ("SOLICITADA".equals(situacao)) {
-            situacao = "EM_USO";
-        } else {
-            throw new IllegalStateException(
-                    "Nao e possivel retirar em " + situacao + ".");
-        }
+        fase = fase.retirar();
     }
 
     public void devolver() {
-        if ("EM_USO".equals(situacao)) {
-            situacao = "ENCERRADA";
-        } else {
-            throw new IllegalStateException(
-                    "Nao e possivel devolver em " + situacao + ".");
-        }
+        fase = fase.devolver();
     }
 
     public void cancelar() {
-        if ("SOLICITADA".equals(situacao)) {
-            situacao = "ENCERRADA";
-        } else {
-            throw new IllegalStateException(
-                    "Nao e possivel cancelar em " + situacao + ".");
-        }
+        fase = fase.cancelar();
     }
 
     public Usuario getSolicitante() {
